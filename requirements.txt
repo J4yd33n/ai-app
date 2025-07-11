@@ -1,3 +1,4 @@
 streamlit==1.46.1
 transformers==4.47.0
 torch==2.5.0
+python-3.11
