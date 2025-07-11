@@ -1,5 +1,5 @@
 import streamlit as st
-from transformers import pipeline, Conversation
+from transformers import pipeline
 
 # Initialize the conversational model
 @st.cache_resource
@@ -29,17 +29,15 @@ if user_input:
     # Add user message to chat history
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     
-    # Create a conversation object
-    conversation = Conversation(user_input)
+    # Prepare conversation history for the model
+    history = "\n".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.chat_history])
     
     # Get bot response
-    response = chatbot(conversation)
-    
-    # Extract the bot's response
-    bot_response = response.generated_responses[-1]
+    with st.spinner("Bot is thinking..."):
+        response = chatbot(user_input, max_length=200, num_return_sequences=1)[0]['generated_text']
     
     # Add bot response to chat history
-    st.session_state.chat_history.append({"role": "assistant", "content": bot_response})
+    st.session_state.chat_history.append({"role": "assistant", "content": response})
     
     # Rerun to update the chat display
     st.rerun()
